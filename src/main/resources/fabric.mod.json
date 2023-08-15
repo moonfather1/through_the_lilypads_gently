@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "through-the-lilypads-gently",
 	"version": "${version}",
-	"name": "Through the lilypads, gently",
+	"name": "Through the lily pads, gently",
 	"description": "Boats push lily pads aside instead of breaking them. Nice. Also kind of like in our world.",
 	"authors": [
 		"MoonFather"
