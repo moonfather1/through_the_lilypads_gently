@@ -17,10 +17,10 @@ public class BlockMixin {
 	private void collision(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo info) {
 		BlockState original = world.getBlockState(pos);
 		if (SwampMath.tryMoveLilypad(pos, entity, world, 1.0, 0.0, original)
-			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.4, Math.PI/4, original) //45d
-			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.4, Math.PI/4, original)
-			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.2, Math.PI/2, original) //90d
-			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.2, Math.PI/2, original)
+			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.4, +Math.PI/4, original) //45d
+			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.4, -Math.PI/4, original)
+			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.2, +Math.PI/2, original) //90d
+			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.2, -Math.PI/2, original)
 			|| SwampMath.tryMoveLilypad(pos, entity, world, 1.9, 0.0, original))
 		{
 			info.cancel();

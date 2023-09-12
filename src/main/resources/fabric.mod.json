@@ -8,7 +8,7 @@
 		"MoonFather"
 	],
 	"contact": {
-		"homepage": "https://modrinth.com/mod/through-the-lily-pads-gently/settings",
+		"homepage": "https://modrinth.com/mod/through-the-lily-pads-gently",
 		"sources": "https://github.com/moonfather1/through_the_lilypads_gently"
 	},
 	"license": "MIT",
@@ -20,11 +20,12 @@
 		]
 	},
 	"mixins": [
-		"through-the-lilypads-gently.mixins.json"
+		"through-the-lilypads-gently.mixins.json",
+		"through-the-lilypads-gently--integration.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.22",
-		"minecraft": "~1.20.1",
+		"minecraft": "~1.19.2",
 		"java": ">=17",
 		"fabric-api": "*"
 	},

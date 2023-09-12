@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "moonfather.lilypads.integration",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"GoodEndingMixin1", "GoodEndingMixin2", "GoodEndingMixin3"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

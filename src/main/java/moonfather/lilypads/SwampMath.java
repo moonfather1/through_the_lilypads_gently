@@ -1,10 +1,15 @@
 package moonfather.lilypads;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.PlantBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.TagKey;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public class SwampMath
@@ -27,7 +32,23 @@ public class SwampMath
             world.setBlockState(targetPos, original, 3);
             return true;
         }
+        if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, targetPos) && world.getBlockState(targetPos.up()).isAir())
+        {
+            world.setBlockState(targetPos, original, 3);
+            BlockState maybeCandle = world.getBlockState(blockPos.up());
+            if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
+            {
+                world.setBlockState(targetPos.up(), maybeCandle, 3);
+                world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState(), 3);
+            }
+            world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
+            return true;
+        }
         return false;
     }
 
+    //////////////////////////////
+
+    private static final TagKey<Block> LANTERNS = TagKey.of(Registry.BLOCK_KEY, new Identifier("c", "lanterns"));;
+    private static final TagKey<Block> TORCHES = TagKey.of(Registry.BLOCK_KEY, new Identifier("c", "torches"));;
 }
