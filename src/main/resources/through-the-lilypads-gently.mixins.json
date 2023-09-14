@@ -1,11 +1,13 @@
 {
-	"required": true,
-	"package": "moonfather.lilypads.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"BlockMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "moonfather.lilypads.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "BoatMixin",
+    "FallingMixin",
+    "integration.GoodEndingMixin1",    "integration.GoodEndingMixin2",    "integration.GoodEndingMixin3"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }

@@ -49,7 +49,7 @@ dependencies {
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
-	modRuntimeOnly "curse.maven:good-ending-690161:4363716"
+	modImplementation "curse.maven:good-ending-690161:4363716"
 	//modRuntimeOnly "curse.maven:better-lily-pads-626812:4728536"
 	//modRuntimeOnly "curse.maven:selene-499980:3929272"
 }
@@ -70,7 +70,7 @@ java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 	// if it is present.
 	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+	//withSourcesJar()
 
 	sourceCompatibility = JavaVersion.VERSION_17
 	targetCompatibility = JavaVersion.VERSION_17
