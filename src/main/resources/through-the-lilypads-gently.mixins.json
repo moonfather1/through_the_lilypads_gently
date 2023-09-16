@@ -5,7 +5,12 @@
   "mixins": [
     "BoatMixin",
     "FallingMixin",
-    "integration.GoodEndingMixin1",    "integration.GoodEndingMixin2",    "integration.GoodEndingMixin3"
+    "falling.DamageCancelBase",
+    "falling.DamageCancelVanilla",
+    "integration.GoodEndingBoatMixin",
+    "integration.GoodEndingDamageCancel",
+    "integration.GoodEndingShapeMixin",
+    "integration.GoodEndingShapeMixinBase"
   ],
   "injectors": {
     "defaultRequire": 1

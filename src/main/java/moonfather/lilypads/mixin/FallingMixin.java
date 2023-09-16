@@ -4,6 +4,7 @@ import moonfather.lilypads.SwampMath;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LilyPadBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,18 +20,20 @@ public class FallingMixin
     {
         if (entity.fallDistance > 2.9 && ! world.isClient)
         {
-            //double size = Math.max(entity.getWidth(), 1.0);
-            //System.out.println("~~~falling: dist==" + entity.fallDistance + "   width==" + size);
-//            BlockState original = world.getBlockState(pos);
-//            if (SwampMath.tryMoveLilypad(pos, entity, world, 1.0, 0.0, original)
-//                    || SwampMath.tryMoveLilypad(pos, entity, world, 1.4, +Math.PI / 4, original) //45d
-//                    || SwampMath.tryMoveLilypad(pos, entity, world, 1.4, -Math.PI / 4, original)
-//                    || SwampMath.tryMoveLilypad(pos, entity, world, 1.2, +Math.PI / 2, original) //90d
-//                    || SwampMath.tryMoveLilypad(pos, entity, world, 1.2, -Math.PI / 2, original)
-//                    || SwampMath.tryMoveLilypad(pos, entity, world, 1.9, 0.0, original))
-//            {
-//                info.cancel();
-//            }
+            if (entity instanceof PlayerEntity p && p.isCreative())
+            {
+                return;
+            }
+            double size = Math.max(entity.getWidth(), 1.0);
+            BlockState original = world.getBlockState(pos);
+            if (SwampMath.tryMoveLilypadByLanding(pos, entity, world, 1.1 * size, 0.0, original)
+                    || SwampMath.tryMoveLilypadByLanding(pos, entity, world, 1.1 * size, +Math.PI / 4, original) //45d
+                    || SwampMath.tryMoveLilypadByLanding(pos, entity, world, 1.1 * size, -Math.PI / 4, original)
+                    || SwampMath.tryMoveLilypadByLanding(pos, entity, world, 1.1 * size, +Math.PI / 2, original) //90d
+                    || SwampMath.tryMoveLilypadByLanding(pos, entity, world, 1.1 * size, -Math.PI / 2, original)
+                    || SwampMath.tryMoveLilypadByLanding(pos, entity, world, 1.9 * size, 0.0, original))
+            {
+            }
         }
     }
 }

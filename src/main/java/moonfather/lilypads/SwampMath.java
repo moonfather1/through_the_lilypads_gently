@@ -14,16 +14,31 @@ import net.minecraft.world.World;
 
 public class SwampMath
 {
-    public static boolean tryMoveLilypad(BlockPos blockPos, Entity entity, World world, double distanceFactor, double angleDelta, BlockState original)
+    public static boolean tryMoveLilypadByBoat(BlockPos blockPos, Entity entity, World world, double distanceFactor, double angleDelta, BlockState original)
     {
         double angle = Math.atan2(blockPos.getZ() + 0.5d - entity.getZ(), blockPos.getX() + 0.5d - entity.getX());
         double movement_angle = (entity.getYaw() + 90.0) * Math.PI / 180.0; //we took the other axis as base. doesn't matter.
+        //System.out.println("~~boat_angle==" + movement_angle+ "  angle_to_block==" + angle);
         if (Math.abs(angle + angleDelta - movement_angle) < Math.PI/9  // 20 deg
             || Math.abs(angle + angleDelta - movement_angle + 2*Math.PI) < Math.PI/9  // 20 deg over boundary
             || Math.abs(angle + angleDelta - movement_angle - 2*Math.PI) < Math.PI/9) // should not happen
         {
             return false;  // too close to boat movement angle
         }
+        return tryMoveLilypadCore(blockPos, angle, world, distanceFactor, angleDelta, original);
+    }
+
+    public static boolean tryMoveLilypadByLanding(BlockPos blockPos, Entity entity, World world, double distanceFactor, double angleDelta, BlockState original)
+    {
+        double angle = Math.atan2(blockPos.getZ() + 0.5d - entity.getZ(), blockPos.getX() + 0.5d - entity.getX());
+        //System.out.println("~~angle_to_block==" + angle);
+        return tryMoveLilypadCore(blockPos, angle, world, distanceFactor, angleDelta, original);
+    }
+
+    private static boolean tryMoveLilypadCore(BlockPos blockPos, double angle, World world, double distanceFactor, double angleDelta, BlockState original)
+    {
+        distanceFactor += getDistanceFactorAdjustment(angle, angleDelta);
+        System.out.println("~~for angle delta " + (angleDelta*180/Math.PI) + "  added " + getDistanceFactorAdjustment(angle, angleDelta) + "to distance");
         BlockPos targetPos = blockPos.add((int) Math.round(Math.cos(angle + angleDelta) * distanceFactor), 0, (int) Math.round(Math.sin(angle + angleDelta) * distanceFactor));
         BlockState target = world.getBlockState(targetPos);
         if (target.isAir() && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, targetPos))
@@ -51,4 +66,23 @@ public class SwampMath
 
     private static final TagKey<Block> LANTERNS = TagKey.of(Registry.BLOCK_KEY, new Identifier("c", "lanterns"));;
     private static final TagKey<Block> TORCHES = TagKey.of(Registry.BLOCK_KEY, new Identifier("c", "torches"));;
+
+    /////////////////////////
+
+    private static double getDistanceFactorAdjustment(double angle, double angleDelta)
+    {
+        if (isDiagonal(angle) == isDiagonal(angleDelta))
+        {
+            return 0;
+        }
+        else
+        {
+            return 0.42;  // from 1 to sq(2)
+        }
+    }
+    private static boolean isDiagonal(double angle)
+    {
+        angle = angle / Math.PI * 180;
+        return ((int) Math.abs(Math.round(angle / 45))) % 2 == 1;
+    }
 }
