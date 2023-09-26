@@ -1,17 +1,18 @@
 package moonfather.lilypads.mixin;
 
 import moonfather.lilypads.SwampMath;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LilyPadBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(LilyPadBlock.class)
+@Mixin(value = LilyPadBlock.class, priority = 5)
 public class BoatMixin
 {
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;breakBlock(Lnet/minecraft/util/math/BlockPos;ZLnet/minecraft/entity/Entity;)Z"), method = "onEntityCollision", cancellable = true)

@@ -5,6 +5,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.PlantBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -38,17 +40,20 @@ public class SwampMath
     private static boolean tryMoveLilypadCore(BlockPos blockPos, double angle, World world, double distanceFactor, double angleDelta, BlockState original)
     {
         distanceFactor += getDistanceFactorAdjustment(angle, angleDelta);
-        System.out.println("~~for angle delta " + (angleDelta*180/Math.PI) + "  added " + getDistanceFactorAdjustment(angle, angleDelta) + "to distance");
         BlockPos targetPos = blockPos.add((int) Math.round(Math.cos(angle + angleDelta) * distanceFactor), 0, (int) Math.round(Math.sin(angle + angleDelta) * distanceFactor));
         BlockState target = world.getBlockState(targetPos);
+        if (PositionBlacklist.isInBlacklist(world, targetPos) || ! world.canSetBlock(targetPos)) { return false; }
+        PositionBlacklist.put(world, targetPos);
         if (target.isAir() && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, targetPos))
         {
+            spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
             world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 3);
             world.setBlockState(targetPos, original, 3);
             return true;
         }
         if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, targetPos) && world.getBlockState(targetPos.up()).isAir())
         {
+            spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
             world.setBlockState(targetPos, original, 3);
             BlockState maybeCandle = world.getBlockState(blockPos.up());
             if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
@@ -73,7 +78,7 @@ public class SwampMath
     {
         if (isDiagonal(angle) == isDiagonal(angleDelta))
         {
-            return 0;
+            return 0; // axis aligned
         }
         else
         {
@@ -83,6 +88,17 @@ public class SwampMath
     private static boolean isDiagonal(double angle)
     {
         angle = angle / Math.PI * 180;
-        return ((int) Math.abs(Math.round(angle / 45))) % 2 == 1;
+        return ((int) Math.abs(Math.round(angle / 45))) % 2 == 1;  // diagonal or axis aligned
+    }
+
+    ////////////////////////////////////////////////////////////////////
+
+    private static void spawnParticles(ServerWorld world, BlockPos blockPos, double angle)
+    {
+        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.25, blockPos.getY() + 0.01, blockPos.getZ() + 0.25d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.25, blockPos.getY() + 0.01, blockPos.getZ() + 0.75d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.75, blockPos.getY() + 0.01, blockPos.getZ() + 0.25d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.75, blockPos.getY() + 0.01, blockPos.getZ() + 0.75d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.50, blockPos.getY() + 0.01, blockPos.getZ() + 0.50d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
     }
 }

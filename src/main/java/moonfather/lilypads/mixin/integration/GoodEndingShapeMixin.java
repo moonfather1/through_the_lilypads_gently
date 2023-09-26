@@ -6,11 +6,11 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.orcinus.goodending.blocks.LargeLilyPadBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import net.orcinus.goodending.blocks.LargeLilyPadBlock;
 
 @Pseudo
 @Mixin(LargeLilyPadBlock.class)
