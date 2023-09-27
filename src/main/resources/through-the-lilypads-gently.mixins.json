@@ -6,12 +6,14 @@
     "BoatMixin",
     "falling.DamageCancelBase",
     "falling.DamageCancelVanilla",
+    "falling.DamageCancelWater",
     "falling.FallingMixin",
+    "integration.BetterLilyFallingMixin",
     "integration.GoodEndingBoatMixin",
     "integration.GoodEndingDamageCancel",
     "integration.GoodEndingShapeMixin",
     "integration.GoodEndingShapeMixinBase",
-    "integration.VanillaCollisionFixMixin"
+    "integration.GoodEndingCollisionRudenessMixin"
   ],
   "injectors": {
     "defaultRequire": 1

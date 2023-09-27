@@ -9,8 +9,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.orcinus.goodending.blocks.LargeLilyPadBlock;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@Pseudo
 @Mixin(LargeLilyPadBlock.class)
 public class GoodEndingDamageCancel extends DamageCancelBase
 {
@@ -34,6 +36,7 @@ public class GoodEndingDamageCancel extends DamageCancelBase
             }
         }
         // moved the lily pad. now about damage:
+        entity.fallDistance = 0.1f;
         ci.cancel(); // no damage
     }
 }

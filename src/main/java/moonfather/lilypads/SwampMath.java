@@ -4,7 +4,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.PlantBlock;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
@@ -62,6 +64,35 @@ public class SwampMath
                 world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState(), 3);
             }
             world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
+            return true;
+        }
+        BlockPos above = targetPos.up();
+        if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, above) && world.getBlockState(above).isAir())
+        {
+            spawnParticles((ServerWorld) world, blockPos.up(), angle + angleDelta);
+            BlockState maybeCandle = world.getBlockState(blockPos.up());
+            BlockEntity be1 = world.getBlockEntity(blockPos);
+            NbtCompound nbt = null;
+            if (be1 != null)
+            {
+                nbt = be1.createNbtWithId();
+            }
+            if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
+            {
+                world.setBlockState(blockPos.up(), Blocks.TRIPWIRE.getDefaultState(), 0);
+            }
+            world.setBlockState(targetPos, original, 3);
+            BlockEntity be2 = world.getBlockEntity(targetPos);
+            if (be2 != null && nbt != null)
+            {
+                be2.readNbt(nbt);
+            }
+            world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
+            if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
+            {
+                world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState(), 3);
+                world.setBlockState(targetPos.up(), maybeCandle, 3);
+            }
             return true;
         }
         return false;
