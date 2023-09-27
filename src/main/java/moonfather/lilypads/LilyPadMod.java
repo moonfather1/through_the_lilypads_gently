@@ -2,9 +2,11 @@ package moonfather.lilypads;
 
 import net.fabricmc.api.ModInitializer;
 
-public class LilyPadMod implements ModInitializer {
+public class LilyPadMod implements ModInitializer 
+{
 	@Override
-	public void onInitialize() {
+	public void onInitialize() 
+	{
 		// nothing
 	}
 }

@@ -3,12 +3,12 @@
 	"id": "through-the-lilypads-gently",
 	"version": "${version}",
 	"name": "Through the lily pads, gently",
-	"description": "Boats push lily pads aside instead of breaking them. Nice. Also kind of like in our world.",
+	"description": "Boats push lily pads aside instead of breaking them. Kind of like in human world.",
 	"authors": [
 		"MoonFather"
 	],
 	"contact": {
-		"homepage": "https://modrinth.com/mod/through-the-lily-pads-gently/settings",
+		"homepage": "https://modrinth.com/mod/through-the-lily-pads-gently",
 		"sources": "https://github.com/moonfather1/through_the_lilypads_gently"
 	},
 	"license": "MIT",
@@ -24,7 +24,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.14.22",
-		"minecraft": "~1.20.1",
+		"minecraft": ">=1.20.1",
 		"java": ">=17",
 		"fabric-api": "*"
 	},
