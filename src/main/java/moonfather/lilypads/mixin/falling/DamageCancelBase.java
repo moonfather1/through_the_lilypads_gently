@@ -1,10 +1,10 @@
 package moonfather.lilypads.mixin.falling;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class DamageCancelBase
 {
     @SuppressWarnings("CancellableInjectionUsage")
-    @Inject(at = @At("HEAD"), method = "onLandedUpon", cancellable = true)
-    public void cancelDamage(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
+    @Inject(at = @At("HEAD"), method = "fallOn", cancellable = true, remap = false)
+    public void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
     {
         // marker for override
     }

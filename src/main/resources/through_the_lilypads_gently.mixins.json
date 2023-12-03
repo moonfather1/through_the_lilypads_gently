@@ -1,16 +1,19 @@
 {
+  "minVersion": "0.8",
   "required": true,
-  "package": "moonfather.lilypads.mixin",
   "compatibilityLevel": "JAVA_17",
+  "package": "moonfather.lilypads.mixin",
   "mixins": [
     "BoatMixin",
+    "BushMethodInvoker",
     "falling.DamageCancelBase",
     "falling.DamageCancelVanilla",
     "falling.DamageCancelWater",
-    "falling.FallingMixin",
-    "integration.BetterLilyFallingMixin"
+    "falling.FallingMixin"
+  ],
+  "client": [
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

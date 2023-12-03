@@ -1,13 +1,13 @@
 package moonfather.lilypads;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.LinkedList;
 
 public class PositionBlacklist
 {
-    public static boolean isInBlacklist(World world, BlockPos pos)
+    public static boolean isInBlacklist(Level world, BlockPos pos)
     {
         purgeOldItems(world);
         for (Location l : list)
@@ -20,15 +20,15 @@ public class PositionBlacklist
         return false;
     }
 
-    public static void put(World world, BlockPos pos)
+    public static void put(Level world, BlockPos pos)
     {
         purgeOldItems(world);
-        list.add(new Location(pos, world.hashCode(), world.getTime()));
+        list.add(new Location(pos, world.hashCode(), world.getGameTime()));
     }
 
-    private static void purgeOldItems(World world)
+    private static void purgeOldItems(Level world)
     {
-        list.removeIf(l -> l.world == world.hashCode() && world.getTime() > l.age + 5 * 20);
+        list.removeIf(l -> l.world == world.hashCode() && world.getGameTime() > l.age + 5 * 20);
     }
 
     private static final LinkedList<Location> list = new LinkedList<>();

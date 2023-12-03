@@ -1,101 +1,97 @@
 package moonfather.lilypads;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.PlantBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import moonfather.lilypads.mixin.BushMethodInvoker;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class SwampMath
 {
-    public static boolean tryMoveLilypadByBoat(BlockPos blockPos, Entity entity, World world, double distanceFactor, double angleDelta, BlockState original)
+    public static boolean tryMoveLilypadByBoat(BlockPos blockPos, Entity entity, Level world, double distanceFactor, double angleDelta, BlockState original)
     {
         double angle = Math.atan2(blockPos.getZ() + 0.5d - entity.getZ(), blockPos.getX() + 0.5d - entity.getX());
-        double movement_angle = (entity.getYaw() + 90.0) * Math.PI / 180.0; //we took the other axis as base. doesn't matter.
+        double movement_angle = (entity.getYRot() + 90.0) * Math.PI / 180.0; //we took the other axis as base. doesn't matter.
         //System.out.println("~~boat_angle==" + movement_angle+ "  angle_to_block==" + angle);
         if (Math.abs(angle + angleDelta - movement_angle) < Math.PI/9  // 20 deg
-            || Math.abs(angle + angleDelta - movement_angle + 2*Math.PI) < Math.PI/9  // 20 deg over boundary
-            || Math.abs(angle + angleDelta - movement_angle - 2*Math.PI) < Math.PI/9) // should not happen
+                || Math.abs(angle + angleDelta - movement_angle + 2*Math.PI) < Math.PI/9  // 20 deg over boundary
+                || Math.abs(angle + angleDelta - movement_angle - 2*Math.PI) < Math.PI/9) // should not happen
         {
             return false;  // too close to boat movement angle
         }
         return tryMoveLilypadCore(blockPos, angle, world, distanceFactor, angleDelta, original);
     }
 
-    public static boolean tryMoveLilypadByLanding(BlockPos blockPos, Entity entity, World world, double distanceFactor, double angleDelta, BlockState original)
+    public static boolean tryMoveLilypadByLanding(BlockPos blockPos, Entity entity, Level world, double distanceFactor, double angleDelta, BlockState original)
     {
         double angle = Math.atan2(blockPos.getZ() + 0.5d - entity.getZ(), blockPos.getX() + 0.5d - entity.getX());
         //System.out.println("~~angle_to_block==" + angle);
         return tryMoveLilypadCore(blockPos, angle, world, distanceFactor, angleDelta, original);
     }
 
-    private static boolean tryMoveLilypadCore(BlockPos blockPos, double angle, World world, double distanceFactor, double angleDelta, BlockState original)
+    private static boolean tryMoveLilypadCore(BlockPos blockPos, double angle, Level world, double distanceFactor, double angleDelta, BlockState original)
     {
         distanceFactor += getDistanceFactorAdjustment(angle, angleDelta);
-        BlockPos targetPos = blockPos.add((int) Math.round(Math.cos(angle + angleDelta) * distanceFactor), 0, (int) Math.round(Math.sin(angle + angleDelta) * distanceFactor));
+        BlockPos targetPos = blockPos.offset((int) Math.round(Math.cos(angle + angleDelta) * distanceFactor), 0, (int) Math.round(Math.sin(angle + angleDelta) * distanceFactor));
         BlockState target = world.getBlockState(targetPos);
-        if (PositionBlacklist.isInBlacklist(world, targetPos) || ! world.canSetBlock(targetPos)) { return false; }
+        if (PositionBlacklist.isInBlacklist(world, targetPos) || ! world.isInWorldBounds(targetPos)) { return false; }
         PositionBlacklist.put(world, targetPos);
-        if (target.isAir() && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, targetPos))
+        if (target.isAir() && original.getBlock() instanceof BushBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below()))
         {
             // vanilla lily pads and derivates
-            spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
-            world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 3);
-            world.setBlockState(targetPos, original, 3);
+            spawnParticles((ServerLevel) world, blockPos, angle + angleDelta);
+            world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
+            world.setBlock(targetPos, original, 3);
             return true;
         }
-        if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, targetPos) && world.getBlockState(targetPos.up()).isAir())
+        if (target.is(Blocks.WATER) && original.getBlock() instanceof BushBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below()) && world.getBlockState(targetPos.above()).isAir())
         {
             // good ending support - big lily pads
-            spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
-            world.setBlockState(targetPos, original, 3);
-            BlockState maybeCandle = world.getBlockState(blockPos.up());
-            if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
+            spawnParticles((ServerLevel) world, blockPos, angle + angleDelta);
+            world.setBlock(targetPos, original, 3);
+            BlockState maybeCandle = world.getBlockState(blockPos.above());
+            if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
             {
-                world.setBlockState(targetPos.up(), maybeCandle, 3);
-                world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState(), 3);
+                world.setBlock(targetPos.above(), maybeCandle, 3);
+                world.setBlock(blockPos.above(), Blocks.AIR.defaultBlockState(), 3);
             }
-            world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
+            world.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
             return true;
         }
-        BlockPos above = targetPos.up();
-        if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, above) && world.getBlockState(above).isAir())
+        BlockPos above = targetPos.above();
+        if (target.is(Blocks.WATER) && original.getBlock() instanceof BushBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos) && world.getBlockState(above).isAir())
         {
             // better lily pads support - messy lilypads
-            spawnParticles((ServerWorld) world, blockPos.up(), angle + angleDelta);
-            BlockState maybeCandle = world.getBlockState(blockPos.up());
+            spawnParticles((ServerLevel) world, blockPos.above(), angle + angleDelta);
+            BlockState maybeCandle = world.getBlockState(blockPos.above());
             BlockEntity be1 = world.getBlockEntity(blockPos);
-            NbtCompound nbt = null;
+            CompoundTag nbt = null;
             if (be1 != null)
             {
-                nbt = be1.createNbtWithId();
+                nbt = be1.saveWithId();
             }
-            if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
+            if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
             {
-                world.setBlockState(blockPos.up(), Blocks.TRIPWIRE.getDefaultState(), 0);
+                world.setBlock(blockPos.above(), Blocks.TRIPWIRE.defaultBlockState(), 0);
             }
-            world.setBlockState(targetPos, original, 3);
+            world.setBlock(targetPos, original, 3);
             BlockEntity be2 = world.getBlockEntity(targetPos);
             if (be2 != null && nbt != null)
             {
-                be2.readNbt(nbt);
+                be2.load(nbt);
             }
-            world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
-            if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
+            world.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
+            if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
             {
-                world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState(), 3);
-                world.setBlockState(targetPos.up(), maybeCandle, 3);
+                world.setBlock(blockPos.above(), Blocks.AIR.defaultBlockState(), 3);
+                world.setBlock(targetPos.above(), maybeCandle, 3);
             }
             return true;
         }
@@ -103,11 +99,6 @@ public class SwampMath
     }
 
     //////////////////////////////
-
-    private static final TagKey<Block> LANTERNS = TagKey.of(RegistryKeys.BLOCK, new Identifier("c", "lanterns"));
-    private static final TagKey<Block> TORCHES = TagKey.of(RegistryKeys.BLOCK, new Identifier("c", "torches"));
-
-    /////////////////////////
 
     private static double getDistanceFactorAdjustment(double angle, double angleDelta)
     {
@@ -128,12 +119,12 @@ public class SwampMath
 
     ////////////////////////////////////////////////////////////////////
 
-    private static void spawnParticles(ServerWorld world, BlockPos blockPos, double angle)
+    private static void spawnParticles(ServerLevel world, BlockPos blockPos, double angle)
     {
-        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.25, blockPos.getY() + 0.01, blockPos.getZ() + 0.25d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
-        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.25, blockPos.getY() + 0.01, blockPos.getZ() + 0.75d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
-        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.75, blockPos.getY() + 0.01, blockPos.getZ() + 0.25d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
-        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.75, blockPos.getY() + 0.01, blockPos.getZ() + 0.75d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
-        world.spawnParticles(ParticleTypes.FISHING, blockPos.getX() + 0.50, blockPos.getY() + 0.01, blockPos.getZ() + 0.50d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.25, blockPos.getY() + 0.01, blockPos.getZ() + 0.25d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.25, blockPos.getY() + 0.01, blockPos.getZ() + 0.75d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.75, blockPos.getY() + 0.01, blockPos.getZ() + 0.25d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.75, blockPos.getY() + 0.01, blockPos.getZ() + 0.75d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.50, blockPos.getY() + 0.01, blockPos.getZ() + 0.50d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
     }
 }
