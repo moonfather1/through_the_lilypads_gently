@@ -2,19 +2,19 @@ package moonfather.lilypads.mixin.integration;
 
 import moonfather.lilypads.SwampMath;
 import moonfather.lilypads.mixin.falling.DamageCancelBase;
-import net.mehvahdjukaar.betterlily.WaterloggedLilyBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.orcinus.goodending.blocks.LargeLilyPadBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Pseudo
-@Mixin(WaterloggedLilyBlock.class)
-public class BetterLilyFallingMixin  extends DamageCancelBase
+@Mixin(LargeLilyPadBlock.class)
+public class GoodEndingDamageCancel extends DamageCancelBase
 {
     @Override
     public void cancelDamage(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
@@ -34,10 +34,9 @@ public class BetterLilyFallingMixin  extends DamageCancelBase
                 {
                 }
             }
-
-            // moved the lily pad. now about damage:
-            entity.fallDistance = 0.1f;
-            ci.cancel();
         }
+        // moved the lily pad. now about damage:
+        entity.fallDistance = 0.1f;
+        ci.cancel(); // no damage
     }
 }

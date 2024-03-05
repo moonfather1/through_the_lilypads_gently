@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.3-SNAPSHOT'
+	id 'fabric-loom' version '1.5-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -50,7 +50,11 @@ dependencies {
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 
-	modImplementation "curse.maven:better-lily-pads-626812:4719498"
+	modCompileOnly "curse.maven:better-lily-pads-626812:4719498"
+	modImplementation "curse.maven:amendments-896746:5155261"
+	modRuntimeOnly "curse.maven:selene-499980:5152045"
+	
+	modImplementation "curse.maven:good-ending-690161:5024404"
 }
 
 processResources {
