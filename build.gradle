@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.5-SNAPSHOT'
+	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -45,16 +45,14 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
-	// Uncomment the following line to enable the deprecated Fabric API modules. 
-	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
-
-	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
-
 	modCompileOnly "curse.maven:better-lily-pads-626812:4719498"
-	modImplementation "curse.maven:amendments-896746:5155261"
-	modRuntimeOnly "curse.maven:selene-499980:5152045"
+	modCompileOnly "curse.maven:amendments-896746:5155261"
+	//modRuntimeOnly "curse.maven:selene-499980:5152045"
+
+	modCompileOnly "curse.maven:good-ending-690161:5024404"
+	//modImplementation "curse.maven:swampier-swamps-fabric-687298:4580758"
 	
-	modImplementation "curse.maven:good-ending-690161:5024404"
+	// WARNING: ALL THESE ARE 1.20.1 ! REVIEW IN A FEW WEEKS !!
 }
 
 processResources {
@@ -66,7 +64,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = 21
 }
 
 java {
@@ -75,8 +73,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	//withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {

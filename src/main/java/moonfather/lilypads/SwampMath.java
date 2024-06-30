@@ -1,5 +1,6 @@
 package moonfather.lilypads;
 
+import moonfather.lilypads.mixin.PlantBlockAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -8,8 +9,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.*;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
@@ -47,7 +47,7 @@ public class SwampMath
         BlockState target = world.getBlockState(targetPos);
         if (PositionBlacklist.isInBlacklist(world, targetPos) || ! world.canSetBlock(targetPos)) { return false; }
         PositionBlacklist.put(world, targetPos);
-        if (target.isAir() && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, targetPos))
+        if (target.isAir() && original.getBlock() instanceof PlantBlock plant && ((PlantBlockAccessor) plant).invokeCanPlaceAt(original, world, targetPos))
         {
             // vanilla lily pads and derivates
             spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
@@ -55,7 +55,7 @@ public class SwampMath
             world.setBlockState(targetPos, original, 3);
             return true;
         }
-        if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, targetPos) && world.getBlockState(targetPos.up()).isAir())
+        if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && ((PlantBlockAccessor) plant).invokeCanPlaceAt(original, world, targetPos) && world.getBlockState(targetPos.up()).isAir())
         {
             // good ending support - big lily pads
             spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
@@ -70,16 +70,17 @@ public class SwampMath
             return true;
         }
         BlockPos above = targetPos.up();
-        if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && plant.canPlaceAt(original, world, above) && world.getBlockState(above).isAir())
+        if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && ((PlantBlockAccessor) plant).invokeCanPlaceAt(original, world, above) && world.getBlockState(above).isAir())
         {
             // better lily pads support - messy lilypads
             spawnParticles((ServerWorld) world, blockPos.up(), angle + angleDelta);
             BlockState maybeCandle = world.getBlockState(blockPos.up());
             BlockEntity be1 = world.getBlockEntity(blockPos);
             NbtCompound nbt = null;
+            RegistryWrapper.WrapperLookup stupidLookup = DynamicRegistryManager.of(Registries.REGISTRIES);
             if (be1 != null)
             {
-                nbt = be1.createNbtWithId();
+                nbt = be1.createNbtWithId(stupidLookup);
             }
             if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
             {
@@ -89,7 +90,7 @@ public class SwampMath
             BlockEntity be2 = world.getBlockEntity(targetPos);
             if (be2 != null && nbt != null)
             {
-                be2.readNbt(nbt);
+                be2.read(nbt, stupidLookup);
             }
             world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
             if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
@@ -104,8 +105,8 @@ public class SwampMath
 
     //////////////////////////////
 
-    private static final TagKey<Block> LANTERNS = TagKey.of(RegistryKeys.BLOCK, new Identifier("c", "lanterns"));
-    private static final TagKey<Block> TORCHES = TagKey.of(RegistryKeys.BLOCK, new Identifier("c", "torches"));
+    private static final TagKey<Block> LANTERNS = TagKey.of(RegistryKeys.BLOCK, Identifier.of("c", "lanterns"));
+    private static final TagKey<Block> TORCHES = TagKey.of(RegistryKeys.BLOCK, Identifier.of("c", "torches"));
 
     /////////////////////////
 

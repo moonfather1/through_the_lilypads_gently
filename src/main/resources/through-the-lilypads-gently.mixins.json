@@ -1,9 +1,10 @@
 {
   "required": true,
   "package": "moonfather.lilypads.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BoatMixin",
+    "PlantBlockAccessor",
     "falling.DamageCancelBase",
     "falling.DamageCancelVanilla",
     "falling.DamageCancelWater",

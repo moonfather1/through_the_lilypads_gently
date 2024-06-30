@@ -15,7 +15,7 @@ import net.orcinus.goodending.blocks.LargeLilyPadBlock;
 
 @Pseudo
 @Mixin(LargeLilyPadBlock.class)
-public class GoodEndingBoatMixin extends PlantBlock
+public abstract class GoodEndingBoatMixin extends PlantBlock
 {
     private GoodEndingBoatMixin(Settings settings) { super(settings); }
 
