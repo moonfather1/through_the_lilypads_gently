@@ -45,7 +45,7 @@ public class SwampMath
         distanceFactor += getDistanceFactorAdjustment(angle, angleDelta);
         BlockPos targetPos = blockPos.add((int) Math.round(Math.cos(angle + angleDelta) * distanceFactor), 0, (int) Math.round(Math.sin(angle + angleDelta) * distanceFactor));
         BlockState target = world.getBlockState(targetPos);
-        if (PositionBlacklist.isInBlacklist(world, targetPos) || ! world.canSetBlock(targetPos)) { return false; }
+        if (PositionBlacklist.isInBlacklist(world, targetPos) || ! SwampMath.canSetBlock(world, targetPos)) { return false; }
         PositionBlacklist.put(world, targetPos);
         if (target.isAir() && original.getBlock() instanceof PlantBlock plant && ((PlantBlockAccessor) plant).invokeCanPlaceAt(original, world, targetPos))
         {
@@ -101,6 +101,13 @@ public class SwampMath
             return true;
         }
         return false;
+    }
+
+    private static boolean canSetBlock(World world, BlockPos targetPos)
+    {
+        return world instanceof ServerWorld sw && sw.getWorldBorder().contains(targetPos);
+        //... or i could have just...
+        //return true; // old canSetBlock(BlockPos) is no more.   there is world.canPlayerModifyAt() but i see no real point.
     }
 
     //////////////////////////////

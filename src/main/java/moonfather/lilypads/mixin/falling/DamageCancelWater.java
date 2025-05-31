@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class DamageCancelWater extends DamageCancelBase
 {
     @Override
-    public void cancelDamage(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
+    public void cancelDamage(World world, BlockState state, BlockPos pos, Entity entity, double fallDistance, CallbackInfo ci)
     {
         entity.fallDistance = 0.1f;
         ci.cancel();

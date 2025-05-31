@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BetterLilyNewFallingMixin extends DamageCancelBase
 {
     @Override
-    public void cancelDamage(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
+    public void cancelDamage(World world, BlockState state, BlockPos pos, Entity entity, double fallDistance, CallbackInfo ci)
     {
         if (entity.fallDistance > 2.9 && ! world.isClient)
         {

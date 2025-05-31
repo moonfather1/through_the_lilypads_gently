@@ -3,6 +3,7 @@ package moonfather.lilypads.mixin;
 import moonfather.lilypads.SwampMath;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BoatMixin
 {
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;breakBlock(Lnet/minecraft/util/math/BlockPos;ZLnet/minecraft/entity/Entity;)Z"), method = "onEntityCollision", cancellable = true)
-	private void collision(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo info)
+	private void collision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, CallbackInfo info)
 	{
 		BlockState original = world.getBlockState(pos);
 		if (SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, 0.0, original)

@@ -4,19 +4,20 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BoatMixin",
+    "MountMixin",
     "PlantBlockAccessor",
     "falling.DamageCancelBase",
     "falling.DamageCancelVanilla",
     "falling.DamageCancelWater",
     "falling.FallingMixin",
     "integration.BetterLilyNewFallingMixin",
-    "integration.BetterLilyOldFallingMixin",
-    "integration.GoodEndingBoatMixin",
     "integration.GoodEndingCollisionRudenessMixin",
     "integration.GoodEndingDamageCancel",
     "integration.GoodEndingShapeMixin",
-    "integration.GoodEndingShapeMixinBase"
+    "integration.GoodEndingShapeMixinBase",
+    "integration.SwampierSwampsBoatMixin"
   ],
+  "plugin": "moonfather.lilypads.mixin_message_removal.ConfigPlugin",
   "injectors": {
     "defaultRequire": 1
 	}

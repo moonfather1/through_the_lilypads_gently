@@ -4,6 +4,7 @@ import moonfather.lilypads.SwampMath;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LilyPadBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class FallingMixin
 {
     @Inject(at = @At(value = "TAIL"), method = "onEntityCollision", cancellable = false)
-    public void collision2(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo ci)
+    public void collision2(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, CallbackInfo ci)
     {
         if (entity.fallDistance > 2.9 && ! world.isClient)
         {

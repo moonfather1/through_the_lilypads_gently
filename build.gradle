@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -44,15 +44,12 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
-	modCompileOnly "curse.maven:better-lily-pads-626812:4719498"
-	modCompileOnly "curse.maven:amendments-896746:5155261"
-	//modRuntimeOnly "curse.maven:selene-499980:5152045"
 
-	modCompileOnly "curse.maven:good-ending-690161:5024404"
-	//modImplementation "curse.maven:swampier-swamps-fabric-687298:4580758"
-	
-	// WARNING: ALL THESE ARE 1.20.1 ! REVIEW IN A FEW WEEKS !!
+	modCompileOnly "curse.maven:amendments-896746:5811212"          // WARNING: THESE ARE 1.21.1
+	//modRuntimeOnly "curse.maven:selene-499980:5878797"            // WARNING: THESE ARE 1.21.1
+
+	modCompileOnly "curse.maven:good-ending-690161:5024404"     // WARNING: THESE ARE 1.20.1 ! REVIEW IN A FEW WEEKS !!
+	modCompileOnly "curse.maven:swampier-swamps-fabric-687298:5243778"   // WARNING: THESE ARE 1.20.4 ! REVIEW IN A FEW WEEKS !!
 }
 
 processResources {
