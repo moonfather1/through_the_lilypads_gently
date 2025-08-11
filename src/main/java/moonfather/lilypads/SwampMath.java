@@ -13,6 +13,9 @@ import net.minecraft.registry.*;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -80,7 +83,7 @@ public class SwampMath
             RegistryWrapper.WrapperLookup stupidLookup = DynamicRegistryManager.of(Registries.REGISTRIES);
             if (be1 != null)
             {
-                nbt = be1.createNbtWithId(stupidLookup);
+                nbt = be1.createNbtWithIdentifyingData(stupidLookup);
             }
             if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
             {
@@ -90,7 +93,7 @@ public class SwampMath
             BlockEntity be2 = world.getBlockEntity(targetPos);
             if (be2 != null && nbt != null)
             {
-                be2.read(nbt, stupidLookup);
+                be2.read(NbtReadView.create(new ErrorReporter.Impl(), stupidLookup, nbt));
             }
             world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
             if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
