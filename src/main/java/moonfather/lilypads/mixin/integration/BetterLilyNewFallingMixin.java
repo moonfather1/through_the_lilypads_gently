@@ -5,6 +5,7 @@ import moonfather.lilypads.mixin.falling.DamageCancelBase;
 import net.mehvahdjukaar.amendments.common.block.WaterloggedLilyBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.FrogEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -21,6 +22,11 @@ public class BetterLilyNewFallingMixin extends DamageCancelBase
     {
         if (entity.fallDistance > 2.9 && ! world.isClient)
         {
+            if (entity instanceof FrogEntity)
+            {
+                entity.fallDistance /= 5;
+                return;
+            }
             if (! (entity instanceof PlayerEntity p && p.isCreative()))
             {
                 double size = Math.max(entity.getWidth(), 1.0);

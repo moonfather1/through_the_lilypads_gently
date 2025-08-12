@@ -4,6 +4,7 @@ import moonfather.lilypads.SwampMath;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LilyPadBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.FrogEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +23,11 @@ public class FallingMixin
         {
             if (entity instanceof PlayerEntity p && p.isCreative())
             {
+                return;
+            }
+            if (entity instanceof FrogEntity)
+            {
+                entity.fallDistance /= 5;
                 return;
             }
             double size = Math.max(entity.getWidth(), 1.0);

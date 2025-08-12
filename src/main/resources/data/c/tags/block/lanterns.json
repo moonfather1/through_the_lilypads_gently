@@ -1,0 +1,10 @@
+{
+	"replace": false,
+	"values": [
+		"minecraft:lantern",
+		"minecraft:soul_lantern",
+		{ "id": "aurorasdeco:amethyst_lantern", "required": false },
+		{ "id": "aurorasdeco:redstone_lantern", "required": false },
+		{ "id": "aurorasdeco:copper_sulfate_lantern", "required": false }
+	]
+}
