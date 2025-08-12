@@ -5,7 +5,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.LilyPadBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCollisionHandler;
+import net.minecraft.entity.passive.FrogEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,6 +25,11 @@ public class FallingMixin
         {
             if (entity instanceof PlayerEntity p && p.isCreative())
             {
+                return;
+            }
+            if (entity instanceof FrogEntity)
+            {
+                entity.fallDistance /= 2;
                 return;
             }
             double size = Math.max(entity.getWidth(), 1.0);
