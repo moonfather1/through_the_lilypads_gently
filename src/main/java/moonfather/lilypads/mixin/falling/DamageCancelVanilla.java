@@ -1,5 +1,6 @@
 package moonfather.lilypads.mixin.falling;
 
+import moonfather.lilypads.integration.BetterLilyFallingSupport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -14,6 +15,10 @@ public class DamageCancelVanilla extends DamageCancelBase
     @Override
     public void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
     {
+        // we'll handle amendments mod here. hot happy about it given how buggy it is, but we'll handle it.
+        BetterLilyFallingSupport.cancelDamage(world, state, pos, entity, fallDistance, ci);
+
+        // main handler
         entity.fallDistance = 0.1f;
         ci.cancel();
     }

@@ -11,7 +11,7 @@ public class Constants
 
     public static class Tags
     {
-        public static final TagKey<Block> LANTERNS = TagKey.create(Registries.BLOCK, new ResourceLocation("c", "lanterns"));;
-        public static final TagKey<Block> TORCHES = TagKey.create(Registries.BLOCK, new ResourceLocation("c", "torches"));;
+        public static final TagKey<Block> LANTERNS = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", "lanterns"));;
+        public static final TagKey<Block> TORCHES = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", "torches"));;
     }
 }

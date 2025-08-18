@@ -2,7 +2,9 @@ package moonfather.lilypads;
 
 import moonfather.lilypads.mixin.BushMethodInvoker;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -73,9 +75,10 @@ public class SwampMath
             BlockState maybeCandle = world.getBlockState(blockPos.above());
             BlockEntity be1 = world.getBlockEntity(blockPos);
             CompoundTag nbt = null;
+            HolderLookup.Provider stupidLookup = world.registryAccess();
             if (be1 != null)
             {
-                nbt = be1.saveWithId();
+                nbt = be1.saveWithId(stupidLookup);
             }
             if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
             {
@@ -85,7 +88,7 @@ public class SwampMath
             BlockEntity be2 = world.getBlockEntity(targetPos);
             if (be2 != null && nbt != null)
             {
-                be2.load(nbt);
+                be2.loadWithComponents(nbt, stupidLookup);
             }
             world.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
             if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))

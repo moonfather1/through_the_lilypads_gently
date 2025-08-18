@@ -1,5 +1,6 @@
 package moonfather.lilypads.mixin.falling;
 
+import moonfather.lilypads.integration.BetterLilyFallingSupport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -19,6 +20,7 @@ public class DamageCancelBase
     {
         // marker for override
     }
+
     /*
     this is not how this should be done. this should have been cancelled on collision test, not after the message handling but...
     ...but i'm tired and fabric-provided code doesn't match bytecode and breakpoints don't work (they're on random lines).
