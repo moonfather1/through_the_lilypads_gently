@@ -1,22 +1,29 @@
 package moonfather.lilypads;
 
+import com.mojang.logging.LogUtils;
 import moonfather.lilypads.mixin.BushMethodInvoker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.data.registries.VanillaRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.slf4j.Logger;
+
 
 public class SwampMath
 {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     public static boolean tryMoveLilypadByBoat(BlockPos blockPos, Entity entity, Level world, double distanceFactor, double angleDelta, BlockState original)
     {
         double angle = Math.atan2(blockPos.getZ() + 0.5d - entity.getZ(), blockPos.getX() + 0.5d - entity.getX());
@@ -45,7 +52,7 @@ public class SwampMath
         BlockState target = world.getBlockState(targetPos);
         if (PositionBlacklist.isInBlacklist(world, targetPos) || ! world.isInWorldBounds(targetPos)) { return false; }
         PositionBlacklist.put(world, targetPos);
-        if (target.isAir() && original.getBlock() instanceof BushBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below()))
+        if (target.isAir() && original.getBlock() instanceof VegetationBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below()))
         {
             // vanilla lily pads and derivates
             spawnParticles((ServerLevel) world, blockPos, angle + angleDelta);
@@ -53,7 +60,7 @@ public class SwampMath
             world.setBlock(targetPos, original, 3);
             return true;
         }
-        if (target.is(Blocks.WATER) && original.getBlock() instanceof BushBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below()) && world.getBlockState(targetPos.above()).isAir())
+        if (target.is(Blocks.WATER) && original.getBlock() instanceof VegetationBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below()) && world.getBlockState(targetPos.above()).isAir())
         {
             // good ending support - big lily pads
             spawnParticles((ServerLevel) world, blockPos, angle + angleDelta);
@@ -68,28 +75,33 @@ public class SwampMath
             return true;
         }
         BlockPos above = targetPos.above();
-        if (target.is(Blocks.WATER) && original.getBlock() instanceof BushBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos) && world.getBlockState(above).isAir())
+        if (target.is(Blocks.WATER) && original.getBlock() instanceof VegetationBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos) && world.getBlockState(above).isAir())
         {
             // better lily pads support - messy lilypads
             spawnParticles((ServerLevel) world, blockPos.above(), angle + angleDelta);
             BlockState maybeCandle = world.getBlockState(blockPos.above());
             BlockEntity be1 = world.getBlockEntity(blockPos);
-            CompoundTag nbt = null;
-            HolderLookup.Provider stupidLookup = world.registryAccess();
-            if (be1 != null)
+            try (ProblemReporter.ScopedCollector stupidCollector = new ProblemReporter.ScopedCollector(() -> "some_path", LOGGER))
             {
-                nbt = be1.saveWithId(stupidLookup);
+                HolderLookup.Provider stupidLookup = world.registryAccess();
+                TagValueOutput output = TagValueOutput.createWithContext(stupidCollector, stupidLookup);
+                if (be1 != null)
+                {
+                    be1.saveWithId(output);
+                }
+                ValueInput input = TagValueInput.create(stupidCollector, stupidLookup, output.buildResult());
+                if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
+                {
+                    world.setBlock(blockPos.above(), Blocks.TRIPWIRE.defaultBlockState(), 0);
+                }
+                world.setBlock(targetPos, original, 3);
+                BlockEntity be2 = world.getBlockEntity(targetPos);
+                if (be2 != null)
+                {
+                    be2.loadWithComponents(input);
+                }
             }
-            if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
-            {
-                world.setBlock(blockPos.above(), Blocks.TRIPWIRE.defaultBlockState(), 0);
-            }
-            world.setBlock(targetPos, original, 3);
-            BlockEntity be2 = world.getBlockEntity(targetPos);
-            if (be2 != null && nbt != null)
-            {
-                be2.loadWithComponents(nbt, stupidLookup);
-            }
+
             world.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
             if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
             {

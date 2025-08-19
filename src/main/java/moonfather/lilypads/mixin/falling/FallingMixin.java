@@ -3,6 +3,7 @@ package moonfather.lilypads.mixin.falling;
 import moonfather.lilypads.SwampMath;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class FallingMixin
 {
     @Inject(at = @At(value = "TAIL"), method = "entityInside", cancellable = false, remap = false)
-    public void collision2(BlockState state, Level world, BlockPos pos, Entity entity, CallbackInfo ci)
+    public void collision2(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier something, CallbackInfo ci)
     {
         if (entity.fallDistance > 2.9 && ! world.isClientSide())
         {

@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class DamageCancelVanilla extends DamageCancelBase
 {
     @Override
-    public void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
+    public void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, double fallDistance, CallbackInfo ci)
     {
         // we'll handle amendments mod here. hot happy about it given how buggy it is, but we'll handle it.
         BetterLilyFallingSupport.cancelDamage(world, state, pos, entity, fallDistance, ci);

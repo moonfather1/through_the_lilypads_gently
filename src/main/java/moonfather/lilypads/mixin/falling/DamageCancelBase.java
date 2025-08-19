@@ -16,7 +16,7 @@ public class DamageCancelBase
 {
     @SuppressWarnings("CancellableInjectionUsage")
     @Inject(at = @At("HEAD"), method = "fallOn", cancellable = true, remap = false)
-    public void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
+    public void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, double fallDistance, CallbackInfo ci)
     {
         // marker for override
     }

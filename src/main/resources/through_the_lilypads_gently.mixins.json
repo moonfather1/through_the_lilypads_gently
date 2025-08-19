@@ -6,6 +6,7 @@
   "mixins": [
     "BoatMixin",
     "BushMethodInvoker",
+    "MountMixin",
     "falling.DamageCancelBase",
     "falling.DamageCancelVanilla",
     "falling.DamageCancelWater",

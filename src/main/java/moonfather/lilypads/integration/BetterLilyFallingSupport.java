@@ -3,6 +3,7 @@ package moonfather.lilypads.integration;
 import moonfather.lilypads.Constants;
 import moonfather.lilypads.SwampMath;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -11,14 +12,15 @@ import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.ModList;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Optional;
+
 public class BetterLilyFallingSupport
 {
-    public static void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci)
+    public static void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, double fallDistance, CallbackInfo ci)
     {
         if (entity.fallDistance <= 2.9 || world.isClientSide)
         {
@@ -28,10 +30,13 @@ public class BetterLilyFallingSupport
         {
             modPresent = ModList.get().isLoaded("amendments");
             modCheckDone = true;
-            modBlock = Blocks.AIR;
             if (modPresent)
             {
                 modBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("amendments", "water_lily_pad"));
+            }
+            else
+            {
+                modBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.withDefaultNamespace("air"));
             }
         }
         if (! modPresent)
@@ -43,7 +48,7 @@ public class BetterLilyFallingSupport
             pos = pos.below();
             state = world.getBlockState(pos);
         }
-        if (! state.is(modBlock))
+        if (! state.is(modBlock.get().value()))
         {
             return;
         }
@@ -72,5 +77,5 @@ public class BetterLilyFallingSupport
     }
 
     private static boolean modCheckDone = false, modPresent = false;
-    private static Block modBlock = null;
+    private static Optional<Holder.Reference<Block>> modBlock = null;
 }
