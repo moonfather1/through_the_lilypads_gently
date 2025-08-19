@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = WaterlilyBlock.class, priority = 5)
 public class MountMixin
 {
-    @Inject(at = @At(value = "TAIL"), method = "entityInside", cancellable = true)
+    @Inject(at = @At(value = "TAIL"), method = "entityInside")
     private void horseCollision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier something, CallbackInfo info)
     {
         if (world.isClientSide())
@@ -27,6 +27,7 @@ public class MountMixin
         {
             return;
         }
+        lastX = pos.getX();  lastZ = pos.getZ();
         BlockState original = world.getBlockState(pos);
         if (SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, 0.0, original)
                 || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, +Math.PI/4, original) //45d
