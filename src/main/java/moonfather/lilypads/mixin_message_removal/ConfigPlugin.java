@@ -1,6 +1,5 @@
 package moonfather.lilypads.mixin_message_removal;
 
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
 import org.objectweb.asm.tree.ClassNode;
@@ -23,7 +22,7 @@ public class ConfigPlugin implements IMixinConfigPlugin
         {
             for (ModFileInfo i: LoadingModList.get().getModFiles())
             {
-                if (i.moduleName().equals("amendments"))
+                if (! i.getMods().isEmpty() && i.getMods().getFirst().getModId().equals("amendments"))
                 {
                     return true;
                 }

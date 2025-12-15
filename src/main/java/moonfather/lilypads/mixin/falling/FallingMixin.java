@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class FallingMixin
 {
     @Inject(at = @At(value = "TAIL"), method = "entityInside", cancellable = false, remap = false)
-    public void collision2(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier something, CallbackInfo ci)
+    private void collision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier something, boolean intersects, CallbackInfo info)
     {
         if (entity.fallDistance > 2.9 && ! world.isClientSide())
         {

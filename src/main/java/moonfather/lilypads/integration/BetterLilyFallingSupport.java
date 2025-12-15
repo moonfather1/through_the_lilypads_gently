@@ -5,7 +5,7 @@ import moonfather.lilypads.SwampMath;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.frog.Frog;
@@ -22,7 +22,7 @@ public class BetterLilyFallingSupport
 {
     public static void cancelDamage(Level world, BlockState state, BlockPos pos, Entity entity, double fallDistance, CallbackInfo ci)
     {
-        if (entity.fallDistance <= 2.9 || world.isClientSide)
+        if (entity.fallDistance <= 2.9 || world.isClientSide())
         {
             return;
         }
@@ -32,11 +32,11 @@ public class BetterLilyFallingSupport
             modCheckDone = true;
             if (modPresent)
             {
-                modBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("amendments", "water_lily_pad"));
+                modBlock = BuiltInRegistries.BLOCK.get(Identifier.fromNamespaceAndPath("amendments", "water_lily_pad"));
             }
             else
             {
-                modBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.withDefaultNamespace("air"));
+                modBlock = BuiltInRegistries.BLOCK.get(Identifier.withDefaultNamespace("air"));
             }
         }
         if (! modPresent)
