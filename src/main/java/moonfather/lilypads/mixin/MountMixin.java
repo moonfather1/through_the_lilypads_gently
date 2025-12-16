@@ -28,14 +28,19 @@ public class MountMixin
             return;
         }
         lastX = pos.getX();  lastZ = pos.getZ();
-        BlockState original = world.getBlockState(pos);
-        if (SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, 0.0, original)
-                || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, +Math.PI/4, original) //45d
-                || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, -Math.PI/4, original)
-                || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.1, +Math.PI/2, original) //90d
-                || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.1, -Math.PI/2, original)
-                || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.9, 0.0, original))
+        boolean bigEnough = entity.getBoundingBox().getXsize() >= 1.1 && entity.getBoundingBox().getZsize() >= 0.5 || entity.getBoundingBox().getXsize() >= 0.5 && entity.getBoundingBox().getZsize() >= 1.1;
+        // not the thing is - cows, sheep and pigs are all the same size (0.89999) i wanted cows but not the other two...  shelved.
+        if (bigEnough)
         {
+            BlockState original = world.getBlockState(pos);
+            if (SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, 0.0, original)
+                    || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, +Math.PI/4, original) //45d
+                    || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, -Math.PI/4, original)
+                    || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.1, +Math.PI/2, original) //90d
+                    || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.1, -Math.PI/2, original)
+                    || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.9, 0.0, original))
+            {
+            }
         }
     }
 
