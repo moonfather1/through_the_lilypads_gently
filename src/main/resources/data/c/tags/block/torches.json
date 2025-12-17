@@ -4,6 +4,6 @@
 		"minecraft:torch",
 		"minecraft:soul_torch",
 		"minecraft:redstone_torch",
-		{ "id": "aurorasdeco:copper_sulfate_lantern", "required": false }
+		"minecraft:copper_torch"
 	]
 }

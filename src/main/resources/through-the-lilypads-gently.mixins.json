@@ -5,17 +5,12 @@
   "mixins": [
     "BoatMixin",
     "MountMixin",
-    "PlantBlockAccessor",
+    "PlantBlockInvoker",
     "falling.DamageCancelBase",
     "falling.DamageCancelVanilla",
     "falling.DamageCancelWater",
     "falling.FallingMixin",
-    "integration.BetterLilyNewFallingMixin",
-    "integration.GoodEndingCollisionRudenessMixin",
-    "integration.GoodEndingDamageCancel",
-    "integration.GoodEndingShapeMixin",
-    "integration.GoodEndingShapeMixinBase",
-    "integration.SwampierSwampsBoatMixin"
+    "integration.BetterLilyNewFallingMixin"
   ],
   "plugin": "moonfather.lilypads.mixin_message_removal.ConfigPlugin",
   "injectors": {

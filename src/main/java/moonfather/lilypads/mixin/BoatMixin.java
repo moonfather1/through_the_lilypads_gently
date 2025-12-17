@@ -1,23 +1,22 @@
 package moonfather.lilypads.mixin;
 
 import moonfather.lilypads.SwampMath;
-import net.minecraft.block.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCollisionHandler;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.WaterlilyBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = LilyPadBlock.class, priority = 5)
+@Mixin(value = WaterlilyBlock.class, priority = 5)
 public class BoatMixin
 {
-	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;breakBlock(Lnet/minecraft/util/math/BlockPos;ZLnet/minecraft/entity/Entity;)Z"), method = "onEntityCollision", cancellable = true)
-	private void collision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, CallbackInfo info)
+	@Inject(at = @At(value = "INVOKE", target = "net/minecraft/world/level/Level.destroyBlock(Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;)Z"), method = "entityInside", cancellable = true)
+	private void collision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier something, boolean intersects, CallbackInfo info)
 	{
 		BlockState original = world.getBlockState(pos);
 		if (SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, 0.0, original)
