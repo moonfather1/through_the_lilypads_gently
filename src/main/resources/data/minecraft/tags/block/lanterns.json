@@ -1,12 +1,9 @@
 {
   "replace": false,
   "values": [
-    "minecraft:lantern",
-    "minecraft:soul_lantern",
     { "id": "biomeswevegone:blue_glow_bottle", "required": false },
     { "id": "biomeswevegone:red_glow_bottle", "required": false },
     { "id": "biomeswevegone:green_glow_bottle", "required": false },
-    { "id": "biomeswevegone:yellow_glow_bottle", "required": false },
-    { "id": "minecraft:copper_lantern", "required": false }
+    { "id": "biomeswevegone:yellow_glow_bottle", "required": false }
   ]
 }
