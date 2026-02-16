@@ -4,6 +4,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BoatMixin",
+    "FallingBlockAccessor",
+    "FrogspawnAccessor",
+    "FrogspawnMixin",
     "MountMixin",
     "PlantBlockAccessor",
     "falling.DamageCancelBase",

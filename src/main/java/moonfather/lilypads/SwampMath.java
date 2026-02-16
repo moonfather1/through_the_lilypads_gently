@@ -1,10 +1,9 @@
 package moonfather.lilypads;
 
+import moonfather.lilypads.block_sliding.SlidingManager;
+import moonfather.lilypads.mixin.FrogspawnAccessor;
 import moonfather.lilypads.mixin.PlantBlockAccessor;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.PlantBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
@@ -15,6 +14,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
 public class SwampMath
@@ -49,24 +49,31 @@ public class SwampMath
         PositionBlacklist.put(world, targetPos);
         if (target.isAir() && original.getBlock() instanceof PlantBlock plant && ((PlantBlockAccessor) plant).invokeCanPlaceAt(original, world, targetPos))
         {
-            // vanilla lily pads and derivates
+            // vanilla lily pads and derivatives
             spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
-            world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 3);
-            world.setBlockState(targetPos, original, 3);
+            SlidingManager.simpleRelocation(world, blockPos, targetPos, original);  // instead of world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 3); world.setBlockState(targetPos, original, 3);
+            return true;
+        }
+        if (target.isAir() && original.getBlock() instanceof FrogspawnBlock fs && ((FrogspawnAccessor)fs).invokeCanPlaceAt(original, world, targetPos))
+        {
+            // same as vanilla lily pads and derivatives
+            spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
+            SlidingManager.simpleRelocation(world, blockPos, targetPos, original);  // instead of world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 3); world.setBlockState(targetPos, original, 3);
             return true;
         }
         if (target.isOf(Blocks.WATER) && original.getBlock() instanceof PlantBlock plant && ((PlantBlockAccessor) plant).invokeCanPlaceAt(original, world, targetPos) && world.getBlockState(targetPos.up()).isAir())
         {
             // good ending support - big lily pads
             spawnParticles((ServerWorld) world, blockPos, angle + angleDelta);
-            world.setBlockState(targetPos, original, 3);
             BlockState maybeCandle = world.getBlockState(blockPos.up());
             if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
             {
-                world.setBlockState(targetPos.up(), maybeCandle, 3);
-                world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState(), 3);
+                SlidingManager.jointRelocationWithBlockAbove(world, blockPos, targetPos, original, maybeCandle);
             }
-            world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
+            else
+            {
+                SlidingManager.simpleRelocation(world, blockPos, targetPos, original);
+            }
             return true;
         }
         BlockPos above = targetPos.up();
@@ -77,27 +84,12 @@ public class SwampMath
             BlockState maybeCandle = world.getBlockState(blockPos.up());
             BlockEntity be1 = world.getBlockEntity(blockPos);
             NbtCompound nbt = null;
-            RegistryWrapper.WrapperLookup stupidLookup = DynamicRegistryManager.of(Registries.REGISTRIES);
             if (be1 != null)
             {
-                nbt = be1.createNbtWithId(stupidLookup);
+                nbt = be1.createNbtWithId(world.getRegistryManager());
             }
-            if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
-            {
-                world.setBlockState(blockPos.up(), Blocks.TRIPWIRE.getDefaultState(), 0);
-            }
-            world.setBlockState(targetPos, original, 3);
-            BlockEntity be2 = world.getBlockEntity(targetPos);
-            if (be2 != null && nbt != null)
-            {
-                be2.read(nbt, stupidLookup);
-            }
-            world.setBlockState(blockPos, Blocks.WATER.getDefaultState(), 3);
-            if (maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS))
-            {
-                world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState(), 3);
-                world.setBlockState(targetPos.up(), maybeCandle, 3);
-            }
+            boolean willMoveBlockAbove = maybeCandle.isIn(BlockTags.CANDLES) || maybeCandle.isIn(TORCHES) || maybeCandle.isIn(LANTERNS);
+            SlidingManager.relocationWithBlockEntitySupport(world, blockPos, targetPos, original, willMoveBlockAbove, maybeCandle, nbt);
             return true;
         }
         return false;

@@ -42,17 +42,18 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
-	//modImplementation "curse.maven:amendments-896746:5811212"
-	//modRuntimeOnly "curse.maven:selene-499980:5878797"
-
-	modCompileOnly "curse.maven:good-ending-690161:5024404"     // WARNING: THESE ARE 1.20.1 ! REVIEW IN A FEW WEEKS !!
+        modRuntimeOnly "curse.maven:good-ending-690161:7387420"   // 1.21.1
+        modCompileOnly "curse.maven:good-ending-690161:7387420"   // 1.21.1
 	modCompileOnly "curse.maven:swampier-swamps-fabric-687298:5243778"   // WARNING: THESE ARE 1.20.4 ! REVIEW IN A FEW WEEKS !!
 
-	modRuntimeOnly "curse.maven:selene-499980:6818414"
-	modImplementation "curse.maven:amendments-896746:6258330"
+//	modRuntimeOnly "curse.maven:selene-499980:6818414"
+//	modRuntimeOnly "curse.maven:amendments-896746:6258330"
+        modCompileOnly "curse.maven:amendments-896746:6258330"
 
-	// we don't need it but our dependencies do.
-	modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+//        modRuntimeOnly "curse.maven:enchanting-vanilla-1241199:6814025"
+
+	// we actually need it as of v2.0
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 processResources {
