@@ -28,7 +28,7 @@ public class MountMixin
             return;
         }
         BlockState original = world.getBlockState(pos);
-        if (original.getBlock() instanceof LilyPadBlock && entity.hasControllingPassenger() && world instanceof ServerWorld) // last one for cast
+        if (entity.hasControllingPassenger() && original.getBlock() instanceof LilyPadBlock && world instanceof ServerWorld) // last one for cast
         {
             lastX = pos.getX();  lastZ = pos.getZ();
             if (SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, 0.0, original)
