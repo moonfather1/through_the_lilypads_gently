@@ -5,14 +5,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.WaterlilyBlock;
+import net.minecraft.world.level.block.LilyPadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = WaterlilyBlock.class, priority = 5)
+@Mixin(value = LilyPadBlock.class, priority = 5)
 public class BoatMixin
 {
     @Inject(at = @At(value = "INVOKE", target = "net/minecraft/world/level/Level.destroyBlock(Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;)Z"), method = "entityInside", cancellable = true)
@@ -26,6 +26,7 @@ public class BoatMixin
                 || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.1, -Math.PI/2, original)
                 || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.9, 0.0, original))
         {
+            System.out.println("~~ boat  " + entity.getDeltaMovement() + " ~~ [ " + entity.tickCount + " ] ~~ " + entity.hashCode() + " / " + entity.level().isClientSide());
             info.cancel();
         }
     }

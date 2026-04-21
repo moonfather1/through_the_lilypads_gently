@@ -1,6 +1,5 @@
 package moonfather.lilypads.mixin.falling;
 
-import moonfather.lilypads.integration.BetterLilyFallingSupport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;

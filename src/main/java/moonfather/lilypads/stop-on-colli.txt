@@ -1,0 +1,10 @@
+----initial diag-----
+
+problem with stopping on collision is that this check and speed update happens on client
+
+                if (this.horizontalCollision) {
+                    Vec3 vec3 = this.getDeltaMovement();
+                    this.setDeltaMovement(xCollision ? 0.0 : vec3.x, vec3.y, zCollision ? 0.0 : vec3.z);
+                }
+
+it would be difficult to detect that when it arrives to server.

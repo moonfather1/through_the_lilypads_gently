@@ -1,5 +1,6 @@
 package moonfather.lilypads.mixin_message_removal;
 
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
 import org.objectweb.asm.tree.ClassNode;
@@ -20,12 +21,12 @@ public class ConfigPlugin implements IMixinConfigPlugin
 //        }
         if (mixinClassName.equals("moonfather.lilypads.integration.BetterLilyNewFallingMixin"))
         {
-            for (ModFileInfo i: LoadingModList.get().getModFiles())
+            for (ModFileInfo i: FMLLoader. getCurrent().getLoadingModList().getModFiles())
             {
                 if (! i.getMods().isEmpty() && i.getMods().getFirst().getModId().equals("amendments"))
                 {
                     return true;
-                }
+                }                                                                // actually this mixin does not exist anymore. oh well.
             }
             return false;
         }
