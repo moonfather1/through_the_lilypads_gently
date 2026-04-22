@@ -1,7 +1,10 @@
 package moonfather.lilypads;
 
 import com.mojang.logging.LogUtils;
+import moonfather.lilypads.block_sliding.SlidingManager;
 import moonfather.lilypads.mixin.BushMethodInvoker;
+import moonfather.lilypads.mixin.sliding.FrogspawnAccessor;
+import moonfather.lilypads.other.ConfigManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,6 +14,7 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FrogspawnBlock;
 import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -52,26 +56,51 @@ public class SwampMath
         BlockState target = world.getBlockState(targetPos);
         if (PositionBlacklist.isInBlacklist(world, targetPos) || ! world.isInWorldBounds(targetPos)) { return false; }
         PositionBlacklist.put(world, targetPos);
-        if (target.isAir() && original.getBlock() instanceof VegetationBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below()))
+        if (
+                target.isAir() && original.getBlock() instanceof VegetationBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below())
+                    ||         // or frogspawn - same as vanilla lily pads and derivatives
+                target.isAir() && original.getBlock() instanceof FrogspawnBlock fs && ((FrogspawnAccessor)fs).invokeMayPlaceOn(world, targetPos)
+        )
         {
-            // vanilla lily pads and derivates
+            // vanilla lily pads and derivatives
             spawnParticles((ServerLevel) world, blockPos, angle + angleDelta);
-            world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
-            world.setBlock(targetPos, original, 3);
+            if (ConfigManager.getConfig().slidingEnabled())
+            {
+                SlidingManager.simpleRelocation(world, blockPos, targetPos, original);
+            }
+            else
+            {
+                world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
+                world.setBlock(targetPos, original, 3);
+            }
             return true;
         }
         if (target.is(Blocks.WATER) && original.getBlock() instanceof VegetationBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below()) && world.getBlockState(targetPos.above()).isAir())
         {
             // good ending support - big lily pads
             spawnParticles((ServerLevel) world, blockPos, angle + angleDelta);
-            world.setBlock(targetPos, original, 3);
             BlockState maybeCandle = world.getBlockState(blockPos.above());
-            if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
+            if (ConfigManager.getConfig().slidingEnabled())
             {
-                world.setBlock(targetPos.above(), maybeCandle, 3);
-                world.setBlock(blockPos.above(), Blocks.AIR.defaultBlockState(), 3);
+                if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
+                {
+                    SlidingManager.jointRelocationWithBlockAbove(world, blockPos, targetPos, original, maybeCandle);
+                }
+                else
+                {
+                    SlidingManager.simpleRelocation(world, blockPos, targetPos, original);
+                }
             }
-            world.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
+            else
+            {
+                world.setBlock(targetPos, original, 3);
+                if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
+                {
+                    world.setBlock(targetPos.above(), maybeCandle, 3);
+                    world.setBlock(blockPos.above(), Blocks.AIR.defaultBlockState(), 3);
+                }
+                world.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
+            }
             return true;
         }
         BlockPos above = targetPos.above();
@@ -90,25 +119,32 @@ public class SwampMath
                     be1.saveWithId(output);
                 }
                 ValueInput input = TagValueInput.create(stupidCollector, stupidLookup, output.buildResult());
-                if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
+                if (ConfigManager.getConfig().slidingEnabled())
                 {
-                    world.setBlock(blockPos.above(), Blocks.TRIPWIRE.defaultBlockState(), 0);
+                    boolean willMoveBlockAbove = maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS);
+                    SlidingManager.relocationWithBlockEntitySupport(world, blockPos, targetPos, original, willMoveBlockAbove, maybeCandle, input);
                 }
-                world.setBlock(targetPos, original, 3);
-                BlockEntity be2 = world.getBlockEntity(targetPos);
-                if (be2 != null)
+                else
                 {
-                    be2.loadWithComponents(input);
+                    if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
+                    {
+                        world.setBlock(blockPos.above(), Blocks.TRIPWIRE.defaultBlockState(), 0);
+                    }
+                    world.setBlock(targetPos, original, 3);
+                    BlockEntity be2 = world.getBlockEntity(targetPos);
+                    if (be2 != null)
+                    {
+                        be2.loadWithComponents(input);
+                    }
+                    world.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
+                    if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
+                    {
+                        world.setBlock(blockPos.above(), Blocks.AIR.defaultBlockState(), 3);
+                        world.setBlock(targetPos.above(), maybeCandle, 3);
+                    }
                 }
+                return true;
             }
-
-            world.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
-            if (maybeCandle.is(BlockTags.CANDLES) || maybeCandle.is(Constants.Tags.TORCHES) || maybeCandle.is(Constants.Tags.LANTERNS))
-            {
-                world.setBlock(blockPos.above(), Blocks.AIR.defaultBlockState(), 3);
-                world.setBlock(targetPos.above(), maybeCandle, 3);
-            }
-            return true;
         }
         return false;
     }

@@ -6,11 +6,14 @@
   "mixins": [
     "BoatMixin",
     "BushMethodInvoker",
+    "FrogspawnMixin",
     "MountMixin",
     "falling.DamageCancelBase",
     "falling.DamageCancelVanilla",
     "falling.DamageCancelWater",
-    "falling.FallingMixin"
+    "falling.FallingMixin",
+    "sliding.FallingBlockAccessor",
+    "sliding.FrogspawnAccessor"
   ],
   "client": [
   ],
