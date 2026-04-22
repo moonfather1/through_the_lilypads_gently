@@ -4,13 +4,16 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BoatMixin",
+    "FrogspawnMixin",
     "MountMixin",
     "PlantBlockInvoker",
     "falling.DamageCancelBase",
     "falling.DamageCancelVanilla",
     "falling.DamageCancelWater",
     "falling.FallingMixin",
-    "integration.BetterLilyNewFallingMixin"
+    "integration.BetterLilyNewFallingMixin",
+    "sliding.FallingBlockAccessor",
+    "sliding.FrogspawnAccessor"
   ],
   "plugin": "moonfather.lilypads.mixin_message_removal.ConfigPlugin",
   "injectors": {
