@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.WaterlilyBlock;
+import net.minecraft.world.level.block.LilyPadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = WaterlilyBlock.class, priority = 5)
+@Mixin(value = LilyPadBlock.class, priority = 5)
 public class MountMixin
 {
     @Inject(at = @At(value = "TAIL"), method = "entityInside", cancellable = true)
@@ -32,8 +32,8 @@ public class MountMixin
         }
         lastX = pos.getX();    lastZ = pos.getZ();    lastType = entity.getType();
         BlockState original = world.getBlockState(pos);
-        if ((entity.hasControllingPassenger() || entity.getType().is(EntityTypeTags.CAN_WEAR_NAUTILUS_ARMOR))
-                && world instanceof ServerLevel && original.getBlock() instanceof WaterlilyBlock)
+        if ((entity.hasControllingPassenger() || entity.is(EntityTypeTags.CAN_WEAR_NAUTILUS_ARMOR))
+                && world instanceof ServerLevel && original.getBlock() instanceof LilyPadBlock)
         {
             if (SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, 0.0, original)
                     || SwampMath.tryMoveLilypadByBoat(pos, entity, world, 1.0, +Math.PI/4, original) //45d
