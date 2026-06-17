@@ -3,6 +3,7 @@ package moonfather.lilypads.block_sliding;
 import moonfather.lilypads.mixin.sliding.FallingBlockAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,7 +14,7 @@ public class NonFallingBlockEntity extends FallingBlockEntity
 {
     private NonFallingBlockEntity(Level world, double x, double y, double z, BlockState block)
     {
-        this(EntityType.FALLING_BLOCK, world);
+        this(EntityTypes.FALLING_BLOCK, world);
         ((FallingBlockAccessor) this).lilypads$setBlockState(block);
         this.blocksBuilding = true;
         this.setPos(x, y, z);
@@ -35,7 +36,7 @@ public class NonFallingBlockEntity extends FallingBlockEntity
     }
     public static NonFallingBlockEntity fromBlock(Level world, BlockPos pos, BlockState state, double vx, double vz, BlockState blockToLeaveBehind, int adjustmentY)
     {
-        NonFallingBlockEntity fallingBlockEntity = new NonFallingBlockEntity(world, (double)pos.getX() + 0.5, (double)pos.getY(), (double)pos.getZ() + 0.5, state.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState)state.setValue(BlockStateProperties.WATERLOGGED, false) : state);
+        NonFallingBlockEntity fallingBlockEntity = new NonFallingBlockEntity(world, (double)pos.getX() + 0.5, (double)pos.getY() + 0.05, (double)pos.getZ() + 0.5, state.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState)state.setValue(BlockStateProperties.WATERLOGGED, false) : state);
         if (blockToLeaveBehind == null) { blockToLeaveBehind = state.getFluidState().createLegacyBlock(); }
         world.setBlock(pos, blockToLeaveBehind, 3);
         fallingBlockEntity.setNoGravity(true);
