@@ -35,7 +35,7 @@ public class NonFallingBlockEntity extends FallingBlockEntity
     }
     public static NonFallingBlockEntity fromBlock(Level world, BlockPos pos, BlockState state, double vx, double vz, BlockState blockToLeaveBehind, int adjustmentY)
     {
-        NonFallingBlockEntity fallingBlockEntity = new NonFallingBlockEntity(world, (double)pos.getX() + 0.5, (double)pos.getY(), (double)pos.getZ() + 0.5, state.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState)state.setValue(BlockStateProperties.WATERLOGGED, false) : state);
+        NonFallingBlockEntity fallingBlockEntity = new NonFallingBlockEntity(world, (double)pos.getX() + 0.5, (double)pos.getY() + 0.05, (double)pos.getZ() + 0.5, state.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState)state.setValue(BlockStateProperties.WATERLOGGED, false) : state);
         if (blockToLeaveBehind == null) { blockToLeaveBehind = state.getFluidState().createLegacyBlock(); }
         world.setBlock(pos, blockToLeaveBehind, 3);
         fallingBlockEntity.setNoGravity(true);
