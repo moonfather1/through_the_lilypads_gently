@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = LilyPadBlock.class, priority = 5)
 public class BoatMixin
 {
-    @Inject(at = @At(value = "INVOKE", target = "net/minecraft/world/level/Level.destroyBlock (Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;)Z"), method = "entityInside", cancellable = true)
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;destroyBlock(Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;)Z"), method = "entityInside", cancellable = true)
     private void collision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier something, boolean intersects, CallbackInfo info)
     {
         BlockState original = world.getBlockState(pos);

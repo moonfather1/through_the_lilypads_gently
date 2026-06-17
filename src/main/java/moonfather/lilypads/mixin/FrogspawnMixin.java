@@ -59,7 +59,4 @@ public abstract class FrogspawnMixin
 
     @Unique
     private static int lastX = 0, lastZ = 0;
-
-    @Invoker("mayPlaceOn")
-    public abstract boolean invokeMayPlaceOn(BlockGetter level, BlockPos pos);
 }

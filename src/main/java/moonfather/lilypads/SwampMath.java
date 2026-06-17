@@ -59,7 +59,7 @@ public class SwampMath
         if (
                 target.isAir() && original.getBlock() instanceof VegetationBlock plant && ((BushMethodInvoker)plant).checkMayPlaceOn(original, world, targetPos.below())
                     ||         // or frogspawn - same as vanilla lily pads and derivatives
-                target.isAir() && original.getBlock() instanceof FrogspawnBlock fs && ((FrogspawnAccessor)fs).invokeMayPlaceOn(world, targetPos)
+                target.isAir() && original.getBlock() instanceof FrogspawnBlock fs && ((FrogspawnAccessor)fs).invokeMayPlaceOn(world, targetPos.below())
         )
         {
             // vanilla lily pads and derivatives
@@ -172,10 +172,10 @@ public class SwampMath
 
     private static void spawnParticles(ServerLevel world, BlockPos blockPos, double angle)
     {
-        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.25, blockPos.getY() + 0.01, blockPos.getZ() + 0.25d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
-        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.25, blockPos.getY() + 0.01, blockPos.getZ() + 0.75d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
-        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.75, blockPos.getY() + 0.01, blockPos.getZ() + 0.25d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
-        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.75, blockPos.getY() + 0.01, blockPos.getZ() + 0.75d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
-        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.50, blockPos.getY() + 0.01, blockPos.getZ() + 0.50d, 0, Math.cos(angle) * 0.31, 0.00, Math.sin(angle) * 0.31, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.05, blockPos.getY() + 0.01, blockPos.getZ() + 0.05d, 0, Math.cos(angle) * 0.40, 0.00, Math.sin(angle) * 0.40, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.05, blockPos.getY() + 0.01, blockPos.getZ() + 0.95d, 0, Math.cos(angle) * 0.40, 0.00, Math.sin(angle) * 0.40, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.95, blockPos.getY() + 0.01, blockPos.getZ() + 0.05d, 0, Math.cos(angle) * 0.40, 0.00, Math.sin(angle) * 0.40, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.95, blockPos.getY() + 0.01, blockPos.getZ() + 0.95d, 0, Math.cos(angle) * 0.40, 0.00, Math.sin(angle) * 0.40, 0.25d);
+        world.sendParticles(ParticleTypes.FISHING, blockPos.getX() + 0.50, blockPos.getY() + 0.01, blockPos.getZ() + 0.50d, 0, Math.cos(angle) * 0.40, 0.00, Math.sin(angle) * 0.40, 0.25d);
     }
 }
